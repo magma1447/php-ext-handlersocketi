@@ -38,7 +38,7 @@ void hs_connection_dtor(hs_conn_t *conn)
 	pefree(conn, conn->is_persistent);
 }
 
-void hs_conn_dtor(zend_resource *rsrc TSRMLS_DC) /* {{{ */
+void hs_conn_dtor(zend_resource *rsrc) /* {{{ */
 {
 	hs_conn_t *conn = (hs_conn_t *)rsrc->ptr;
 	hs_connection_dtor(conn);
@@ -52,9 +52,21 @@ ZEND_MINIT_FUNCTION(handlersocketi)
 	le_hs_pconn = zend_register_list_destructors_ex(NULL, hs_conn_dtor, "HandlerSocketi persistent connection", module_number);
 	le_hs_conn = zend_register_list_destructors_ex(hs_conn_dtor, NULL, "HandlerSocketi connection", module_number);
 
+#if PHP_VERSION_ID >= 80000
+    handlersocketi_register_class();
+#else
     handlersocketi_register_class(TSRMLS_C);
+#endif
+#if PHP_VERSION_ID >= 80000
+    handlersocketi_register_index();
+#else
     handlersocketi_register_index(TSRMLS_C);
+#endif
+#if PHP_VERSION_ID >= 80000
+    handlersocketi_register_exception();
+#else
     handlersocketi_register_exception(TSRMLS_C);
+#endif
 
     return SUCCESS;
 }

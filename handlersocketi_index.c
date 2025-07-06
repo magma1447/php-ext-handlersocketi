@@ -235,13 +235,13 @@ static inline zend_object *hs_index_object_new(zend_class_entry *ce)
 	return hs_index_object_new_ex(ce, NULL);
 }
 
-static inline zend_object *hs_index_object_clone(zval *this_ptr)
+static inline zend_object *hs_index_object_clone(zend_object *this_ptr)
 {
 	hs_index_obj_t *new_obj = NULL;
-	hs_index_obj_t *old_obj = php_hs_index(Z_OBJ_P(this_ptr));
+	hs_index_obj_t *old_obj = php_hs_index(this_ptr);
 	zend_object *new_ov = hs_index_object_new_ex(old_obj->std.ce, &new_obj);
 
-	zend_objects_clone_members(new_ov, Z_OBJ_P(this_ptr));
+	zend_objects_clone_members(new_ov, this_ptr);
 
 	new_obj->id = old_obj->id;
 
@@ -909,7 +909,7 @@ ZEND_METHOD(HandlerSocketi_Index, insert)
 	long fnum = 0;
 	int argc;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "+", &args, &argc) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "+", &args, &argc) == FAILURE) {
 		return;
 	}
 

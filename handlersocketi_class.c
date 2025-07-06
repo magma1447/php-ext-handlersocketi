@@ -189,13 +189,13 @@ static inline zend_object *hs_object_new(zend_class_entry *ce)
 	return hs_object_new_ex(ce, NULL);
 }
 
-static inline zend_object *hs_object_clone(zval *this_ptr)
+static inline zend_object *hs_object_clone(zend_object *this_ptr)
 {
 	hs_obj_t *new_obj = NULL;
-	hs_obj_t *old_obj = php_hs(Z_OBJ_P(this_ptr));
+	hs_obj_t *old_obj = php_hs(this_ptr);
 	zend_object *new_ov = hs_object_new_ex(old_obj->std.ce, &new_obj);
 
-	zend_objects_clone_members(new_ov, Z_OBJ_P(this_ptr));
+	zend_objects_clone_members(new_ov, this_ptr);
 
 	new_obj->timeout = old_obj->timeout;
 	new_obj->rw_timeout = old_obj->rw_timeout;
@@ -502,7 +502,7 @@ ZEND_METHOD(HandlerSocketi, __construct)
 		if (conn) {
 			/* check liveness */
 			if (php_stream_set_option(conn->stream, PHP_STREAM_OPTION_CHECK_LIVENESS, 0, NULL) == PHP_STREAM_OPTION_RETURN_ERR) {
-				hs_conn_dtor(le TSRMLS_CC);
+				hs_conn_dtor(le);
 				conn = NULL;
 			}
 		}
